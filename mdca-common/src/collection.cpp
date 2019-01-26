@@ -7,7 +7,16 @@
 #include <fost/push_back>
 #include <fost/urlhandler>
 
+#if __has_include(<filesystem>)
+#include <filesystem>
+namespace fs = std::filesystem;
+#elif __has_include(<experimental/filesystem>)
 #include <experimental/filesystem>
+namespace fs = std::experimental::filesystem;
+#else
+namespace fs = boost::filesystem;
+#endif
+
 #include <mutex>
 
 #include <mdca/collection.hpp>
@@ -55,7 +64,7 @@ fostlib::json wfp::collection(
     fostlib::json beanbags{fostlib::json::object_t()};
     std::error_code error;
     // The directory might not exist. Error handling deals with that
-    std::experimental::filesystem::directory_iterator dirend,
+    fs::directory_iterator dirend,
             entry(fostlib::jsondb::get_db_path(user_path(user, collection))
                           .native(),
                   error);
@@ -94,10 +103,8 @@ fostlib::json wfp::collection(
                 if (include) {
                     fostlib::insert(
                             beanbags, stem, "stat", "size",
-                            std::experimental::filesystem::file_size(
-                                    entry->path()));
-                    auto ftime = std::experimental::filesystem::last_write_time(
-                            entry->path());
+                            fs::file_size(entry->path()));
+                    auto ftime = fs::last_write_time(entry->path());
                     std::time_t tftime =
                             decltype(ftime)::clock::to_time_t(ftime);
                     fostlib::insert(
