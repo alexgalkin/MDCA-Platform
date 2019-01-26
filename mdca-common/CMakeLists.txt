@@ -9,7 +9,7 @@ add_library(mdca-common
     )
 target_include_directories(mdca-common PUBLIC include)
 target_link_libraries(mdca-common beanbag-views)
-if("${ANDROID_ABI}" STREQUAL "")
+if("${ANDROID_ABI}" STREQUAL "" AND NOT APPLE)
     # This is for libstd++ (i.e. GNU standard c++ library)
     target_link_libraries(mdca-common stdc++fs)
 endif()
