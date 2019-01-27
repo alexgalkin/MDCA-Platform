@@ -61,7 +61,8 @@ namespace {
                     auto webcapture_index_string = fostlib::utf::load_file(
                             fostlib::coerce<boost::filesystem::path>(
                                     config["filepath"]));
-                    auto const token = jwt.token(wfp::c_jwt_secret.value().data());
+                    auto const token =
+                            jwt.token(wfp::c_jwt_secret.value().data());
                     auto index_to_serve = fostlib::replace_all(
                             webcapture_index_string,
                             fostlib::coerce<f5::u8view>(config["jwt-replace"]),
