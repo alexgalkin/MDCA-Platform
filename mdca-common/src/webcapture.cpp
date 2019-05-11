@@ -52,7 +52,7 @@ namespace {
                         fostlib::crypto_compare(
                                 signature, fostlib::string(check).substr(0, 43))
                         || fostlib::crypto_compare(
-                                   signature, fostlib::string(check));
+                                signature, fostlib::string(check));
 
                 auto jwt = fostlib::jwt::mint(fostlib::jwt::alg::HS256);
                 jwt.subject(key_name);

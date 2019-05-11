@@ -56,7 +56,7 @@ namespace {
         } else {
             return boost::filesystem::path("db")
                     / fostlib::coerce<boost::filesystem::path>(
-                              fostlib::sha256(user))
+                            fostlib::sha256(user))
                     / boost::filesystem::path(std::string(collection));
         }
     }
