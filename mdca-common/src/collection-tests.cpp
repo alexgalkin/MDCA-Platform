@@ -1,7 +1,13 @@
 #include <mdca/collection.hpp>
+#include <mdca/mdca.hpp>
 #include <fost/file>
 #include <fost/log>
 #include <fost/test>
+
+
+namespace {
+    fostlib::module const c_tests{wfp::c_mdca, "collection-tests"};
+}
 
 
 FSL_TEST_SUITE(collection);
@@ -22,9 +28,9 @@ FSL_TEST_FUNCTION(collection_for_one_db) {
     std::set<fostlib::string> bags;
     std::vector<fostlib::jcursor> paths;
     std::vector<std::function<bool(const fostlib::json &)>> ifs;
-    boost::shared_ptr<fostlib::jsondb> dbp{wfp::database("u1", "c1", "db1")};
+    auto dbp{wfp::database("u1", "c1", "db1")};
     fostlib::json meta{wfp::collection("u1", "c1", bags, paths, ifs)};
-    fostlib::log::debug()("meta", meta);
+    fostlib::log::debug(c_tests)("meta", meta);
     FSL_CHECK(meta.has_key("db1"));
     FSL_CHECK(meta["db1"]["stat"].has_key("modified"));
 #ifdef DEBUG
@@ -39,7 +45,7 @@ FSL_TEST_FUNCTION(collection_filters_non_databases) {
     std::set<fostlib::string> bags;
     std::vector<fostlib::jcursor> paths;
     std::vector<std::function<bool(const fostlib::json &)>> ifs;
-    boost::shared_ptr<fostlib::jsondb> dbp{wfp::database("u1", "c2", "db1")};
+    auto dbp{wfp::database("u1", "c2", "db1")};
     fostlib::utf::save_file(
             fostlib::jsondb::get_db_path(
                     "db/"
@@ -47,15 +53,14 @@ FSL_TEST_FUNCTION(collection_filters_non_databases) {
                     "f40f19/c2/file.txt"),
             "");
     fostlib::json meta{wfp::collection("u1", "c2", bags, paths, ifs)};
-    fostlib::log::debug()("meta", meta);
+    fostlib::log::debug(c_tests)("meta", meta);
     FSL_CHECK(meta.has_key("db1"));
     FSL_CHECK(not meta.has_key("file"));
 }
 
 
 FSL_TEST_FUNCTION(add_new_db) {
-    boost::shared_ptr<fostlib::jsondb> dbp{
-            wfp::database("u1", "one", "db-name")};
+    auto dbp{wfp::database("u1", "one", "db-name")};
     FSL_CHECK(dbp.get());
     FSL_CHECK(dbp->filename());
     FSL_CHECK(fostlib::coerce<fostlib::string>(dbp->filename().value())
@@ -64,13 +69,13 @@ FSL_TEST_FUNCTION(add_new_db) {
 
 
 FSL_TEST_FUNCTION(get_existing_db) {
-    boost::shared_ptr<fostlib::jsondb> dbp{wfp::database("u1", "c1", "db2")};
+    auto dbp{wfp::database("u1", "c1", "db2")};
     FSL_CHECK_EQ(dbp, wfp::database("u1", "c1", "db2"));
 }
 
 
 FSL_TEST_FUNCTION(get_object_from_db) {
-    boost::shared_ptr<fostlib::jsondb> dbp{wfp::database("u1", "c3", "db3")};
+    auto dbp{wfp::database("u1", "c3", "db3")};
     fostlib::jsondb::local db_transaction(*dbp);
     FSL_CHECK_EQ(db_transaction[fostlib::jcursor()], fostlib::json());
 
