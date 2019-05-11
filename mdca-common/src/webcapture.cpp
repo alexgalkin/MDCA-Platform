@@ -24,7 +24,7 @@ namespace {
                 f5::u8view prefix = "?";
 
                 for (auto query_pair : fostlib::splitter(query, '&')) {
-                    const auto query_start = query_pair.substr(0, 3);
+                    const auto query_start = query_pair.substr_pos(0, 3);
 
                     if (query_start == "_k=") {
                         key_name = req.query_string()["_k"].value();
