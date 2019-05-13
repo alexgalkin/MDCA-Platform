@@ -1,5 +1,6 @@
 #include <mdca/activity.hpp>
 #include <mdca/collection.hpp>
+#include <mdca/mdca.hpp>
 #include <beanbag/beanbag>
 #include <fost/datetime>
 #include <fost/insert>
@@ -11,6 +12,9 @@ using namespace fostlib;
 
 
 namespace {
+
+
+    fostlib::module const c_barcode{wfp::c_mdca, "barcode"};
 
 
     const struct barcode : public mdca::activity {
@@ -31,7 +35,7 @@ namespace {
                             .set(path / "completed", timestamp::now())
                             .commit();
                 } catch (std::exception &e) {
-                    log::error()("photo-exception", e.what());
+                    log::error(c_barcode)("photo-exception", e.what());
                     absorb_exception();
                 }
                 locked = fostlib::null;
