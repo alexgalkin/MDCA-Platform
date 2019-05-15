@@ -75,7 +75,10 @@ FSL_TEST_FUNCTION(get_existing_db) {
 
 
 FSL_TEST_FUNCTION(get_object_from_db) {
-    auto dbp{wfp::database("u1", "c3", "db3")};
+    /// Pick a new test name each run so that if we do run the test
+    /// multiple times it stands a chance of passing
+    auto const dbname = fostlib::guid();
+    auto dbp{wfp::database("u1", "c3", dbname)};
     fostlib::jsondb::local db_transaction(*dbp);
     FSL_CHECK_EQ(db_transaction[fostlib::jcursor()], fostlib::json());
 
