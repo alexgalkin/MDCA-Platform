@@ -1,5 +1,6 @@
 #include <mdca/activity.hpp>
 #include <mdca/collection.hpp>
+#include <mdca/mdca.hpp>
 #include <beanbag/beanbag>
 #include <fost/crypto>
 #include <fost/datetime>
@@ -14,6 +15,9 @@ using namespace fostlib;
 namespace {
 
 
+    fostlib::module const c_photo{wfp::c_mdca, "photo"};
+
+
     const struct photo : public mdca::activity {
         photo() : activity("wfp.photo.simulator") {}
 
@@ -26,20 +30,19 @@ namespace {
             if (not process) { process.reset(new worker); }
             (*process)([this, config, dbp, path]() {
                 try {
-                    const auto folder =
-                            fostlib::coerce<boost::filesystem::path>(
-                                    config["folder"]);
+                    const auto folder = fostlib::coerce<fostlib::fs::path>(
+                            config["folder"]);
                     auto source = folder
-                            / fostlib::coerce<boost::filesystem::path>(
+                            / fostlib::coerce<fostlib::fs::path>(
                                           config["source"]);
-                    auto base = boost::filesystem::unique_path();
+                    auto base = fostlib::fs::unique_path();
                     auto value =
                             (folder / base).replace_extension(".thumb.jpeg");
                     auto original = (folder / base).replace_extension(".jpeg");
                     sleep(5);
 
-                    boost::filesystem::copy(source, value);
-                    boost::filesystem::copy(source, original);
+                    fostlib::fs::copy(source, value);
+                    fostlib::fs::copy(source, original);
                     fostlib::digester d(fostlib::md5);
                     d << original;
                     auto md5 = fostlib::coerce<fostlib::string>(
@@ -52,7 +55,7 @@ namespace {
                             .set(path / "completed", timestamp::now())
                             .commit();
                 } catch (std::exception &e) {
-                    log::error()("photo-exception", e.what());
+                    log::error(c_photo)("photo-exception", e.what());
                     absorb_exception();
                 }
                 locked = fostlib::null;
