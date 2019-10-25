@@ -7,7 +7,7 @@
 #include <fost/push_back>
 #include <fost/urlhandler>
 
-#if __has_include(<filesystem>) || __has_include(<experimental/filesystem>)
+#if defined(__ANDROID__) && (__has_include(<filesystem>) || __has_include(<experimental/filesystem>))
 #if __has_include(<filesystem>)
 #include <filesystem>
 namespace fs = std::filesystem;
