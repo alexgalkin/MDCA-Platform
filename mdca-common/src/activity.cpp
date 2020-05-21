@@ -34,7 +34,7 @@ std::pair<boost::shared_ptr<mime>, int> mdca::activity::operator()(
         push_back(errors, "The API is already processing");
         boost::shared_ptr<fostlib::mime> response(new fostlib::text_body(
                 json::unparse(errors, false), fostlib::mime::mime_headers(),
-                L"application/json"));
+                "application/json"));
         return std::make_pair(response, 423);
     } else if (req.method() == "POST") {
         json errors{json::array_t()};
@@ -92,18 +92,19 @@ std::pair<boost::shared_ptr<mime>, int> mdca::activity::operator()(
             if (error) { insert(result, "error", error.value()); }
             boost::shared_ptr<fostlib::mime> response(new fostlib::text_body(
                     json::unparse(result, false), fostlib::mime::mime_headers(),
-                    L"application/json"));
+                    "application/json"));
             return std::make_pair(response, error ? 449 : 200);
         } else {
             boost::shared_ptr<fostlib::mime> response(new fostlib::text_body(
                     json::unparse(errors, false), fostlib::mime::mime_headers(),
-                    L"application/json"));
+                    "application/json"));
             return std::make_pair(response, 449);
         }
     } else {
         json allow;
-        push_back(allow, "allow", "POST");
-        return urlhandler::response_405(allow, path, req, host);
+        push_back(allow, "view", "fost.response.405");
+        push_back(allow, "configuration", "allow", "POST");
+        return fostlib::urlhandler::view::execute(allow, path, req, host);
     }
 }
 
